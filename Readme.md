@@ -22,7 +22,7 @@ These userscripts has been tested with [Tampermonkey](https://addons.mozilla.org
 
 3. Click to install your preferred script:
     * **Sort by Price (Dropdown)** via [Github](https://raw.githubusercontent.com/idkicarus/gog-wishlist-sort-by-price/main/gog-wishlist_sort-by-price_dropdown.user.js) or [Greasy Fork](https://greasyfork.org/en/scripts/526972-gog-wishlist-sort-by-price-dropdown).
-    * **Sort by Price (Button)** via Github or Greasy Fork [Github](https://github.com/idkicarus/gog-wishlist-sort-by-price/raw/refs/heads/main/gog-wishlist_sort-by-price_button.user.js) or [Greasy Fork](https://greasyfork.org/en/scripts/527006-gog-wishlist-sort-by-price-button)
+    * **Sort by Price (Button)** via [Github](https://github.com/idkicarus/gog-wishlist-sort-by-price/raw/refs/heads/main/gog-wishlist_sort-by-price_button.user.js) or [Greasy Fork](https://greasyfork.org/en/scripts/527006-gog-wishlist-sort-by-price-button)
 
 ## Issues
 [Report an issue](https://github.com/idkicarus/gog-wishlist-sort-by-price/issues)
