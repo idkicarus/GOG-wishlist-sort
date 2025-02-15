@@ -1,0 +1,5 @@
+# Ignore specific files
+
+
+# Ignore directories
+.history/
