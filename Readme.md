@@ -1,7 +1,7 @@
 # GOG Wishlist - Sort by Price (Dropdown/Button)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-These userscripts enables sorting by price (ascending and descending) via a dropdown/button on a GOG wishlist page. Switching between "sort by price" and a native sorting option (title, date added, user reviews) automatically refreshes the page twice.
+These userscripts enable sorting by price (ascending and descending) via a dropdown/button on a GOG wishlist page. Switching between "sort by price" and a native sorting option (title, date added, user reviews) automatically refreshes the page twice.
 
 ## Screenshots
 ![Wishlist dropdown](Screenshots/dropdown-sort-ascending.png "Wishlisted gamed sorted by price in ascending order")
