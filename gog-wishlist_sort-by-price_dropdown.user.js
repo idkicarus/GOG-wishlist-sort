@@ -9,8 +9,8 @@
 // @match       https://www.gog.com/*/account/wishlist*
 // @run-at      document-start
 // @grant       none
-// @updateURL    https://raw.githubusercontent.com/idkicarus/gog-wishlist-sort-by-price/main/gog-wishlist_sort-by-price_dropdown.js
-// @downloadURL  https://raw.githubusercontent.com/idkicarus/gog-wishlist-sort-by-price/main/gog-wishlist_sort-by-price_dropdown.js
+// @updateURL    https://raw.githubusercontent.com/idkicarus/gog-wishlist-sort-by-price/main/gog-wishlist_sort-by-price_dropdown.user.js
+// @downloadURL  https://raw.githubusercontent.com/idkicarus/gog-wishlist-sort-by-price/main/gog-wishlist_sort-by-price_dropdown.user.js
 // ==/UserScript==
 
 (function () {
