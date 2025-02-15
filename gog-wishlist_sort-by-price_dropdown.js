@@ -4,6 +4,8 @@
 // @description Enables sorting by price (ascending and descending) via the dropdown on a GOG wishlist page. Switching between "sort by price" and a native sorting option (title, date added, user reviews) automatically refreshes the page twice. 
 // @version     1.01
 // @license MIT
+// @updateURL   https://raw.githubusercontent.com/idkicarus/gog-wishlist-sort-by-price/refs/heads/main/gog-wishlist_sort-by-price_dropdown.js
+// @downloadURL https://raw.githubusercontent.com/idkicarus/gog-wishlist-sort-by-price/refs/heads/main/gog-wishlist_sort-by-price_dropdown.js
 // @match       https://www.gog.com/account/wishlist*
 // @match       https://www.gog.com/*/account/wishlist*
 // @run-at      document-start
