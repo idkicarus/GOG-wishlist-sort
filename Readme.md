@@ -4,7 +4,7 @@
 This userscript enables sorting by price (ascending and descending) via the dropdown on a GOG wishlist page. Switching between "sort by price" and a native sorting option (title, date added, user reviews) automatically refreshes the page twice.
 
 ## Preview
-[!image](Screenshots/open-dropdown.png)
+![dropdown](Screenshots/open-dropdown.png)
 
 ## Compatibility
 This script has been tested with [Greasemonkey](https://addons.mozilla.org/en-US/firefox/addon/greasemonkey/), [Tampermonkey](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/) and [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/) on [Firefox](https://www.mozilla.org/en-US/firefox/new/) and should work with all modern browsers. 
