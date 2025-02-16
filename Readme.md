@@ -1,14 +1,14 @@
 # GOG Wishlist - Sort by Price (Dropdown/Button)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
-These userscripts enable sorting by price (ascending and descending) via a dropdown/button on a GOG wishlist page. Switching between "sort by price" and a native sorting option (title, date added, user reviews) automatically refreshes the page twice.
+These userscripts enable sorting games by price (ascending and descending) via a dropdown/button on a GOG wishlist page. Switching between sorting by price and one of GOG's native sorting options (title, date added, user reviews) automatically refreshes the page twice.
 
 
 ## Screenshots
-![Wishlist dropdown](Screenshots/dropdown-sort-ascending.png "Wishlisted gamed sorted by price in ascending order")
+![Wishlist dropdown](Screenshots/dropdown-sort-ascending.png "Price sorting in wishlist dropdown menu")
 Preview of added dropdown entry.
 
-![Wishlist button](Screenshots/button-sort-ascending.png "Wishlisted gamed sorted by price in ascending order")
+![Wishlist button](Screenshots/button-sort-ascending.png "Price sorting as separate button")
 Preview of added button.
 
 
@@ -24,8 +24,8 @@ These userscripts has been tested with [Tampermonkey](https://addons.mozilla.org
 2. If prompted, restart your browser.
 
 3. Click to install your preferred script:
-    * **Sort by Price (Dropdown)** via [Github](https://raw.githubusercontent.com/idkicarus/gog-wishlist-sort-by-price/main/gog-wishlist_sort-by-price_dropdown.user.js) or [Greasy Fork](https://greasyfork.org/en/scripts/526972-gog-wishlist-sort-by-price-dropdown).
-    * **Sort by Price (Button)** via [Github](https://github.com/idkicarus/gog-wishlist-sort-by-price/raw/refs/heads/main/gog-wishlist_sort-by-price_button.user.js) or [Greasy Fork](https://greasyfork.org/en/scripts/527006-gog-wishlist-sort-by-price-button)
+    * **Sort by Price (Dropdown)** via [Github](https://raw.githubusercontent.com/idkicarus/gog-wishlist-sort/main/gog-wishlist_sort-by-price_dropdown.user.js) or [Greasy Fork](https://greasyfork.org/en/scripts/526972-gog-wishlist-sort-by-price-dropdown).
+    * **Sort by Price (Button)** via [Github](https://github.com/idkicarus/gog-wishlist-sort/raw/refs/heads/main/gog-wishlist_sort-by-price_button.user.js) or [Greasy Fork](https://greasyfork.org/en/scripts/527006-gog-wishlist-sort-by-price-button)
 
 
 ## Issues
