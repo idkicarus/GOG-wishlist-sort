@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name        GOG Wishlist - Sort by Price (Button)
-// @namespace   https://github.com/idkicarus/gog-wishlist-sort
+// @namespace   https://github.com/idkicarus/GOG-wishlist-sort
 // @description Enables sorting by price (ascending and descending) via button on a GOG wishlist page. Switching between "sort by price" and a native sorting option (title, date added, user reviews) automatically refreshes the page twice. 
 // @version     1.02
 // @license     MIT
