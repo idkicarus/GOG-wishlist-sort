@@ -31,4 +31,4 @@ These userscripts have been tested with [Tampermonkey](https://addons.mozilla.or
 
 
 ## Issues
-[Report an issue](https://github.com/idkicarus/gog-wishlist-sort-by-price/issues).
+[Report an issue](https://github.com/idkicarus/gog-wishlist-sort/issues).
