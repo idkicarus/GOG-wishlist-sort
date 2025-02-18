@@ -8,7 +8,7 @@ These userscripts enable sorting games by price (ascending and descending) via a
 ![Wishlist dropdown](Images/dropdown-sort-ascending.png "Price sorting in wishlist dropdown menu")
 Preview of added dropdown entry.
 
-![Wishlist button](Screenshots/button-sort-ascending.png "Price sorting as separate button")
+![Wishlist button](Images/button-sort-ascending.png "Price sorting as separate button")
 Preview of added button.
 
 
