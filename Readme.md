@@ -13,7 +13,7 @@ Preview of added button.
 
 
 ## Compatibility
-These scripts have been tested with [Tampermonkey](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/) on [Firefox](https://www.mozilla.org/en-US/firefox/new/) and [Google Chrome](https://www.google.com/chrome/). However, they should also work with other script managers, like [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/), and with other modern browsers.
+These scripts have only been tested with [Tampermonkey](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/) on [Firefox](https://www.mozilla.org/en-US/firefox/new/) and [Google Chrome](https://www.google.com/chrome/). However, they should also work with other script managers, like [Violentmonkey](https://addons.mozilla.org/en-US/firefox/addon/violentmonkey/), and with other modern browsers.
 
 
 ## Installation
@@ -25,6 +25,6 @@ These scripts have been tested with [Tampermonkey](https://addons.mozilla.org/en
 
 2. If prompted, restart the browser.
 
-3. Click to install your preferred script from one of the available sources:
+3. Install your preferred script from one of the available sources:
     * **Sort by Price (Dropdown)**: [Github](https://raw.githubusercontent.com/idkicarus/GOG-wishlist-sort/main/gog-wishlist_sort-by-price_dropdown.user.js) or [Greasy Fork](https://greasyfork.org/en/scripts/526972-GOG-wishlist-sort-by-price-dropdown).
     * **Sort by Price (Button)**: [Github](https://github.com/idkicarus/GOG-wishlist-sort/raw/refs/heads/main/gog-wishlist_sort-by-price_button.user.js) or [Greasy Fork](https://greasyfork.org/en/scripts/527006-GOG-wishlist-sort-by-price-button)
