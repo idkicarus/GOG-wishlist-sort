@@ -1,17 +1,20 @@
 // ==UserScript==
-// @name        GOG Wishlist - Sort by Price (Dropdown)
-// @namespace   https://github.com/idkicarus/GOG-wishlist-sort
-// @description Enables sorting by price (ascending and descending) via the dropdown on a GOG wishlist page. Switching between "sort by price" and a native sorting option (title, date added, user reviews) automatically refreshes the page twice. 
-// @version     1.01
-// @license     MIT
-// @author      Jibril Ikharo
-// @match       https://www.gog.com/account/wishlist*
-// @match       https://www.gog.com/*/account/wishlist*
-// @run-at      document-start
-// @grant       none
+// @name         GOG Wishlist - Sort by Price (Dropdown)
+// @namespace    https://github.com/idkicarus
+// @homepageURL  https://github.com/idkicarus/GOG-wishlist-sort
+// @supportURL   https://github.com/idkicarus/GOG-wishlist-sort/issues
+// @description  Enables sorting by price (ascending and descending) via the dropdown on a GOG wishlist page. Switching between "sort by price" and a native sorting option (title, date added, user reviews) automatically refreshes the page twice. 
+// @version      1.02
+// @license      MIT
+// @match        https://www.gog.com/account/wishlist*
+// @match        https://www.gog.com/*/account/wishlist*
+// @run-at       document-start
+// @grant        none
 // @updateURL    https://raw.githubusercontent.com/idkicarus/gog-wishlist-sort/main/gog-wishlist_sort-by-price_dropdown.user.js
 // @downloadURL  https://raw.githubusercontent.com/idkicarus/gog-wishlist-sort/main/gog-wishlist_sort-by-price_dropdown.user.js
 // ==/UserScript==
+
+
 
 (function () {
     // Global flags to track whether the last sort was by price and the current sort order (ascending vs descending)
