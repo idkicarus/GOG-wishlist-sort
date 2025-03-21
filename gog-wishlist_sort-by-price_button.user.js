@@ -4,7 +4,7 @@
 // @homepageURL  https://github.com/idkicarus/GOG-wishlist-sort
 // @supportURL   https://github.com/idkicarus/GOG-wishlist-sort/issues
 // @description  Enables sorting by price (ascending and descending) via button on a GOG wishlist page. Switching between "sort by price" and a native sorting option (title, date added, user reviews) automatically refreshes the page twice. 
-// @version      1.02
+// @version      1.03
 // @license      MIT
 // @match        https://www.gog.com/account/wishlist*
 // @match        https://www.gog.com/en/account/wishlist*
@@ -95,43 +95,50 @@
         // Arrays for storing products with valid prices and products that are TBA (or marked as "SOON").
         let pricedItems = [];
         let tbaItems = [];
-
-        // Process each product row.
-        productRows.forEach(row => {
+		
+		// Process each product row.
+		productRows.forEach(row => {
             // Extract the title from the product row.
-            const titleElement = row.querySelector('.product-row__title');
-            const title = titleElement ? titleElement.innerText.trim() : "Unknown Title";
+			const titleElement = row.querySelector('.product-row__title');
+			const title = titleElement ? titleElement.innerText.trim() : "Unknown Title";
 
             // Extract the standard price and discounted price elements.
-            const priceElement = row.querySelector('._price.product-state__price');
-            const discountElement = row.querySelector('.price-text--discount span.ng-binding');
+			const priceElement = row.querySelector('._price.product-state__price');
+			const discountElement = row.querySelector('.price-text--discount span.ng-binding');
 
-            // Detect if the product is marked as "SOON" (or TBA).
-            const soonFlag = row.querySelector('.product-title__flag--soon');
+			// Check if the game is flagged as "SOON" by inspecting a dedicated element.
+			const soonFlag = row.querySelector('.product-title__flag--soon');
 
-            // Determine the price text: if a discount price exists, use it; otherwise, use the standard price.
-            let priceText = discountElement ? discountElement.innerText : priceElement ? priceElement.innerText : null;
+			// Determine which price text to use: prefer discount price if it exists.
+			let priceText = discountElement ? discountElement.innerText : priceElement ? priceElement.innerText : null;
             // Convert the price text to a numeric value by stripping out non-numeric characters.
-            let priceNumeric = priceText ? parseFloat(priceText.replace(/[^0-9.]/g, '').replace(/,/g, '')) : null;
+			let priceNumeric = priceText ? parseFloat(priceText.replace(/[^0-9.]/g, '').replace(/,/g, '')) : null;
 
-            // Check the text content to determine if the product is marked as "TBA" or "SOON".
-            const textContent = priceElement ? priceElement.textContent.toUpperCase() : "";
-            const isTBA = textContent.includes("TBA") || soonFlag || priceText === null;
+			// Retrieve the full text content of the price element in uppercase.
+			// This is used to check for keywords like "TBA".
+			const textContent = priceElement ? priceElement.textContent.toUpperCase() : "";
 
-            // Special handling: if price is exactly 99.99 and a "SOON" flag is present, treat it as TBA.
-            if (isTBA || (priceNumeric && priceNumeric === 99.99 && soonFlag)) {
-                console.log(`[Sort By Price] Marked as TBA/SOON: ${title} (Original Text: '${textContent}')`);
-                tbaItems.push(row);
-            } else {
-                if (!priceNumeric) {
-                    console.warn(`[Sort By Price] No valid price detected for: ${title}. Marking as TBA.`);
-                    tbaItems.push(row);
-                } else {
-                    console.log(`[Sort By Price] ${title} - Extracted Price: ${priceNumeric} (Original Text: '${textContent}')`);
-                    pricedItems.push({ row, price: priceNumeric, title });
-                }
-            }
-        });
+			// Only consider text content and absence of a priceText to mark the item as TBA.
+			// Note: We intentionally do NOT include the soonFlag here, so that a valid price isn't ignored.
+			const isTBA = textContent.includes("TBA") || priceText === null;
+
+			// If the product should be treated as TBA, or if it's marked as SOON with the placeholder price...
+			// This condition ensures that only items with a price exactly equal to 99.99 and a "SOON" flag are treated as TBA.
+			if (isTBA || (priceNumeric && priceNumeric === 99.99 && soonFlag)) {
+				console.log(`[Sort By Price] Marked as TBA/SOON: ${title} (Original Text: '${textContent}')`);
+				tbaItems.push(row);
+			} else {
+				// If there is no valid numeric price, log a warning and treat as TBA.
+				if (!priceNumeric) {
+					console.warn(`[Sort By Price] No valid price detected for: ${title}. Marking as TBA.`);
+					tbaItems.push(row);
+				} else {
+					// Otherwise, log the extracted price and add the item to the pricedItems array for sorting.
+					console.log(`[Sort By Price] ${title} - Extracted Price: ${priceNumeric} (Original Text: '${textContent}')`);
+					pricedItems.push({ row, price: priceNumeric, title });
+				}
+			}
+		});
 
         console.log("[Sort By Price] Sorting priced items...");
         // Sort the priced items array based on the current order (ascending/descending).
