@@ -3,8 +3,8 @@
 // @namespace    https://github.com/idkicarus
 // @homepageURL  https://github.com/idkicarus/GOG-wishlist-sort
 // @supportURL   https://github.com/idkicarus/GOG-wishlist-sort/issues
-// @description  Enables sorting by price (ascending and descending) via the dropdown on a GOG wishlist page. Switching between "sort by price" and a native sorting option (title, date added, user reviews) automatically refreshes the page twice. 
-// @version      1.03
+// @description  Enables sorting by price (ascending and descending) via the dropdown on a GOG wishlist page. Switching between "sort by price" and a native sorting option (title, date added, user reviews) automatically refreshes the page twice.
+// @version      1.04
 // @license      MIT
 // @match        https://www.gog.com/account/wishlist*
 // @match        https://www.gog.com/*/account/wishlist*
@@ -14,45 +14,46 @@
 // @downloadURL  https://raw.githubusercontent.com/idkicarus/gog-wishlist-sort/main/gog-wishlist_sort-by-price_dropdown.user.js
 // ==/UserScript==
 
-
-
 (function () {
-    // Global flags to track whether the last sort was by price and the current sort order (ascending vs descending)
+    // Global flags to track the sorting state.
+    // lastSortWasPrice: Tracks if the last sort action was by price.
+    // ascendingOrder: Determines if the current sort order should be ascending.
     let lastSortWasPrice = false;
     let ascendingOrder = true;
 
-    // Retrieve the refresh stage from sessionStorage.
-    // This is used to control a two-step refresh process which minimizes visual glitches when switching sort methods.
+    // Retrieve the current refresh stage from sessionStorage.
+    // This is used to coordinate a two-step refresh process that helps to avoid visual glitches.
     let refreshStage = sessionStorage.getItem("gog_sort_fix_stage");
 
     /**
-     * Hides the wishlist section by setting its opacity to 0 and disabling pointer events.
-     * This method is used to prevent users from seeing the intermediate state during a refresh.
+     * Hides the wishlist section.
+     *
+     * Sets the opacity to 0 and disables pointer events so that the user does not see the unsorted list during refresh.
      */
     function hideWishlist() {
-        // Select the wishlist container element
         let wishlistSection = document.querySelector(".account__product-lists");
         if (wishlistSection) {
-            wishlistSection.style.opacity = "0"; // Make wishlist invisible but still present in the DOM
-            wishlistSection.style.pointerEvents = "none"; // Disable interactions with the wishlist
+            wishlistSection.style.opacity = "0";
+            wishlistSection.style.pointerEvents = "none";
         }
     }
 
     /**
-     * Shows the wishlist section by restoring its opacity and pointer events.
-     * This is called after the refresh process to reveal the sorted content.
+     * Shows the wishlist section.
+     *
+     * Restores the opacity and re-enables pointer events to reveal the sorted content.
      */
     function showWishlist() {
         let wishlistSection = document.querySelector(".account__product-lists");
         if (wishlistSection) {
-            wishlistSection.style.opacity = "1"; // Restore visibility
-            wishlistSection.style.pointerEvents = "auto"; // Re-enable interactions
+            wishlistSection.style.opacity = "1";
+            wishlistSection.style.pointerEvents = "auto";
         }
     }
 
-    // If we are on the first refresh stage (i.e. refreshStage equals "1"),
-    // wait for the DOM to be loaded and then hide the wishlist.
-    // This ensures that during the refresh process, the user does not see an unsorted list.
+    // If we are in the first stage of refresh (refreshStage equals "1"),
+    // wait until the DOM is fully loaded and then hide the wishlist.
+    // This prevents the user from seeing the intermediate unsorted state.
     if (refreshStage === "1") {
         document.addEventListener("DOMContentLoaded", () => {
             hideWishlist();
@@ -61,138 +62,141 @@
 
     /**
      * Sorts the wishlist products by price.
-     * This function:
-     *  - Locates the wishlist container element.
-     *  - Extracts product rows and separates them into priced items and TBA (to be announced) items.
-     *  - Determines the sort order (ascending or descending) based on whether the last sort was by price.
-     *  - Rebuilds the DOM with sorted priced items followed by TBA items.
+     *
+     * This function performs the following steps:
+     * 1. Logs the start of the sort process.
+     * 2. Retrieves the wishlist container (the second element with class 'list-inner').
+     * 3. Collects all product rows from the container.
+     * 4. Iterates over each product row to extract the product title and price.
+     *    - Separates items with a valid price from those marked as "TBA" (to be announced).
+     * 5. Determines the sort order:
+     *    - If the last sort was by price, toggle the order (ascending/descending);
+     *    - Otherwise, default to ascending.
+     * 6. Sorts the priced items based on the selected order.
+     * 7. Clears the current product rows from the container.
+     * 8. Appends the sorted priced items followed by TBA items back to the container.
+     * 9. Sets the flag indicating that the last sort action was by price.
      */
     function sortByPrice() {
         console.log("[Sort By Price] Sorting Started.");
 
-        // Query all elements with class 'list-inner' and use the second one (index 1) which contains the wishlist
+        // Retrieve the wishlist container element (using the second occurrence of '.list-inner').
         let listInner = document.querySelectorAll('.list-inner')[1];
         if (!listInner) {
             console.error("[Sort By Price] ERROR: Wishlist list-inner element not found.");
             return;
         }
 
-        // Get all wishlist product rows as an array
+        // Convert the NodeList of product rows to an array.
         let productRows = Array.from(listInner.querySelectorAll('.product-row-wrapper'));
         console.log(`[Sort By Price] Found ${productRows.length} product rows.`);
 
-        // Separate items into those with a price (pricedItems) and those that are "TBA" or not priced (tbaItems)
-        let pricedItems = [];
-        let tbaItems = [];
+        let pricedItems = []; // Array to hold products with valid prices.
+        let tbaItems = [];    // Array to hold products that are TBA or marked as SOON.
 
-		// Process each product row.
-		productRows.forEach(row => {
+        // Process each product row.
+        productRows.forEach(row => {
             // Extract the title from the product row.
-			const titleElement = row.querySelector('.product-row__title');
-			const title = titleElement ? titleElement.innerText.trim() : "Unknown Title";
+            const titleElement = row.querySelector('.product-row__title');
+            const title = titleElement ? titleElement.innerText.trim() : "Unknown Title";
 
             // Extract the standard price and discounted price elements.
-			const priceElement = row.querySelector('._price.product-state__price');
-			const discountElement = row.querySelector('.price-text--discount span.ng-binding');
+            const priceElement = row.querySelector('._price.product-state__price');
+            const discountElement = row.querySelector('.price-text--discount span.ng-binding');
 
 			// Check if the game is flagged as "SOON" by inspecting a dedicated element.
-			const soonFlag = row.querySelector('.product-title__flag--soon');
+            const soonFlag = row.querySelector('.product-title__flag--soon');
 
-            // Determine the price text: if a discount price exists, use it; otherwise, use the standard price.
-			let priceText = discountElement ? discountElement.innerText : priceElement ? priceElement.innerText : null;
+            // Determine the price: if a discount price exists, use it; otherwise, use the standard price.
+            let priceText = discountElement ? discountElement.innerText : priceElement ? priceElement.innerText : null;
             // Convert the price text to a numeric value by stripping out non-numeric characters.
-			let priceNumeric = priceText ? parseFloat(priceText.replace(/[^0-9.]/g, '').replace(/,/g, '')) : null;
+            let priceNumeric = priceText ? parseFloat(priceText.replace(/[^0-9.]/g, '').replace(/,/g, '')) : null;
 
-			// Retrieve the full text content of the price element in uppercase.
-			// This is used to check for keywords like "TBA".
-			const textContent = priceElement ? priceElement.textContent.toUpperCase() : "";
+            // Check if the product is marked as TBA by determining the visibility of the TBA badge.
+            const tbaBadge = row.querySelector('.product-state__is-tba');
+            const isTbaVisible = tbaBadge && tbaBadge.offsetParent !== null;
 
-			// Only consider text content and absence of a priceText to mark the item as TBA.
-			// Note: We intentionally do NOT include the soonFlag here, so that a valid price isn't ignored.
-			const isTBA = textContent.includes("TBA") || priceText === null;
+            // Use the visibility check or missing price to classify as TBA.
+            const isTBA = isTbaVisible || priceText === null;
 
-            // Special handling: if price is exactly 99.99 and a "SOON" flag is present, treat it as TBA.
-			if (isTBA || (priceNumeric && priceNumeric === 99.99 && soonFlag)) {
-				console.log(`[Sort By Price] Marked as TBA/SOON: ${title} (Original Text: '${textContent}')`);
-				tbaItems.push(row);
-			} else {
-				// If there is no valid numeric price, log a warning and treat as TBA.
-				if (!priceNumeric) {
-					console.warn(`[Sort By Price] No valid price detected for: ${title}. Marking as TBA.`);
-					tbaItems.push(row);
-				} else {
-					// Otherwise, log the extracted price and add the item to the pricedItems array for sorting.
-					console.log(`[Sort By Price] ${title} - Extracted Price: ${priceNumeric} (Original Text: '${textContent}')`);
-					pricedItems.push({ row, price: priceNumeric, title });
-				}
-			}
-		});
+            // If the item is TBA, or its price is set to 99.99 with a "SOON" flag, or the price is not a number,
+            // add it to the TBA list; otherwise, add it to the priced items list.
+            if (isTBA || (priceNumeric === 99.99 && soonFlag) || isNaN(priceNumeric)) {
+                console.log(`[Sort By Price] Marked as TBA/SOON: ${title}`);
+                tbaItems.push(row);
+            } else {
+                console.log(`[Sort By Price] ${title} - Extracted Price: ${priceNumeric}`);
+                pricedItems.push({ row, price: priceNumeric, title });
+            }
+        });
 
-        // Toggle sorting order:
-        // If the last sorting operation was by price, switch the order (toggle ascending/descending).
-        // Otherwise, default to ascending order.
+        // Determine sort order:
+        // If the last sort was by price, toggle the order; if not, default to ascending.
         ascendingOrder = lastSortWasPrice ? !ascendingOrder : true;
+        // Sort the priced items based on price.
         pricedItems.sort((a, b) => (ascendingOrder ? a.price - b.price : b.price - a.price));
 
-        // Trigger a reflow by briefly hiding and showing the list container.
+        // Force a reflow by briefly hiding and showing the container.
         listInner.style.display = "none";
-        listInner.offsetHeight; // Force reflow
+        listInner.offsetHeight;
         listInner.style.display = "block";
 
-        // Clear all current child elements from the list container.
+        // Clear current content of the wishlist container.
         while (listInner.firstChild) {
             listInner.removeChild(listInner.firstChild);
         }
 
         // Append sorted priced items first.
         pricedItems.forEach(item => listInner.appendChild(item.row));
-        // Append TBA items at the end in their original order.
+        // Append TBA items after the priced items.
         tbaItems.forEach(item => listInner.appendChild(item));
 
-        // Set flag indicating that sorting was done by price
+        // Set flag indicating that the last sort action was by price.
         lastSortWasPrice = true;
         console.log("[Sort By Price] Sorting Completed.");
     }
 
     /**
-     * Handles clicks on native sort options.
-     * When a native sort option is selected after a custom "Price" sort, a two-stage refresh is triggered:
-     *  - First refresh hides the wishlist.
-     *  - Second refresh restores visibility and applies the native sort.
+     * Handles switching back to the native sort method.
      *
-     * @param {string} option - The label of the native sort option clicked.
+     * If the sort was changed after sorting by price, this function triggers a two-stage page refresh
+     * to revert the changes smoothly.
+     *
+     * @param {string} option - The native sort option selected by the user.
      */
     function handleNativeSortClick(option) {
         console.log(`[Sort By Price] Switching to native sort: ${option}`);
 
-        // If we're in the middle of the refresh process (first refresh already occurred)
-        // then trigger the second refresh.
+        // If we're in the second stage of refresh, remove the flag and show the wishlist.
         if (refreshStage === "1") {
             console.log("[Sort By Price] Second refresh triggered to apply sorting.");
-            sessionStorage.removeItem("gog_sort_fix_stage"); // Clear the refresh stage flag
-            showWishlist(); // Reveal the wishlist
+            sessionStorage.removeItem("gog_sort_fix_stage");
+            showWishlist();
             return;
         }
 
-        // If this is the first time switching away from "Price" sort, set the refresh stage flag.
+        // Otherwise, set the refresh stage and hide the wishlist before reloading.
         sessionStorage.setItem("gog_sort_fix_stage", "1");
         console.log("[Sort By Price] First refresh (hiding only wishlist section).");
 
-        hideWishlist(); // Hide the wishlist section before refresh
+        hideWishlist();
         setTimeout(() => {
-            // Reload the page after a short delay to let the UI update
             location.reload();
-        }, 50); // 50ms delay is used to ensure the UI hides before the reload occurs
+        }, 50);
     }
 
     /**
-     * Adds a "Price" sorting option to the sort dropdown.
-     * This function waits until the dropdown is available in the DOM and then adds:
-     *  - A new option to sort by price.
-     *  - Event listeners on native sort options to handle refresh if a previous "Price" sort was active.
+     * Adds the "Price" sort option to the existing dropdown menu.
+     *
+     * This function:
+     * 1. Searches for the dropdown container.
+     * 2. If not found, retries after a short delay.
+     * 3. Creates a new span element representing the "Price" option.
+     * 4. Attaches an event listener to handle sorting when clicked.
+     * 5. Appends the new option to the dropdown.
+     * 6. Adds event listeners to the native sort options to handle switching back if needed.
      */
     function addSortByPriceOption() {
-        // Find the dropdown container for sorting options
         const dropdown = document.querySelector(".header__dropdown ._dropdown__items");
         if (!dropdown) {
             console.log("[Sort By Price] WARNING: Dropdown not found. Retrying...");
@@ -209,13 +213,14 @@
         sortPriceOption.id = "sort-by-price";
         sortPriceOption.className = "_dropdown__item";
         sortPriceOption.innerText = "Price";
-        // When clicked, sort the wishlist by price and update the sort header text
+
+        // When the "Price" option is clicked, sort the wishlist and update the header.
         sortPriceOption.addEventListener("click", () => {
             sortByPrice();
             updateSortHeader("Price");
         });
 
-        // Append the new sort option to the dropdown list
+        // Add the new option to the dropdown.
         dropdown.appendChild(sortPriceOption);
         console.log("[Sort By Price] 'Price' option added to sort dropdown.");
 
@@ -234,66 +239,59 @@
     }
 
     /**
-     * Updates the sort header displayed in the UI to reflect the currently active sort option.
+     * Updates the sort header in the dropdown to reflect the current sorting option.
      *
-     * @param {string} option - The label of the sort option to display.
+     * This function:
+     * 1. Finds the header element.
+     * 2. Hides any native sort option indicators.
+     * 3. Creates or updates a custom header element with the provided sort option text.
+     *
+     * @param {string} option - The sort option to display (e.g., "Price").
      */
     function updateSortHeader(option) {
         console.log(`[Sort By Price] Updating sort header to: ${option}`);
-        // Find the container for the sort header pointer
         const sortHeader = document.querySelector(".header__dropdown ._dropdown__pointer-wrapper");
         if (!sortHeader) {
             console.log("[Sort By Price] ERROR: Sort header not found.");
             return;
         }
 
-        // Hide any existing sort labels that are controlled by Angular's ng-show directive
+        // Hide any elements that show native sort options.
         document.querySelectorAll(".header__dropdown span[ng-show]").forEach(el => {
             el.style.display = "none";
         });
 
-        // Look for a custom header element we may have already created for the "Price" sort
+        // Check if the custom sort header exists; if not, create it.
         let customSortHeader = document.querySelector("#sort-by-price-header");
         if (!customSortHeader) {
-            // If not found, create one and insert it at the beginning of the sort header container
             customSortHeader = document.createElement("span");
             customSortHeader.id = "sort-by-price-header";
             customSortHeader.className = "";
             sortHeader.insertBefore(customSortHeader, sortHeader.firstChild);
         }
 
-        // Update the header text and ensure it is visible
+        // Update the custom header text and make it visible.
         customSortHeader.innerText = option;
         customSortHeader.style.display = "inline-block";
     }
 
-    /**
-     * A MutationObserver is set up to monitor the document for when the sort dropdown is added to the DOM.
-     * Once detected, the "Price" sort option is added and the observer disconnects to prevent further calls.
-     */
+    // Create a MutationObserver to watch for the dropdown menu element.
+    // When the dropdown is found, add the "Price" sort option and disconnect the observer.
     const observer = new MutationObserver((mutations, obs) => {
-        // Check if the dropdown container for sort options is present
         if (document.querySelector(".header__dropdown ._dropdown__items")) {
-            addSortByPriceOption(); // Add the "Price" option to the dropdown
-            obs.disconnect(); // Stop observing since our work is done
+            addSortByPriceOption();
+            obs.disconnect();
         }
     });
-
-    // Begin observing the body for changes in child elements and subtree modifications
     observer.observe(document.body, { childList: true, subtree: true });
 
-    /**
-     * If the script detects that it is in the first refresh stage (refreshStage equals "1"),
-     * perform a second refresh after a short delay. This ensures that any changes made during
-     * the refresh process are fully applied.
-     */
+    // If we are in the refresh stage "1", trigger a second refresh after a short delay.
     if (refreshStage === "1") {
         console.log("[Sort By Price] Performing second refresh to finalize sorting.");
-        sessionStorage.removeItem("gog_sort_fix_stage"); // Clear the refresh flag
+        sessionStorage.removeItem("gog_sort_fix_stage");
 
         setTimeout(() => {
-            // Reload the page after 50ms to allow any pending UI updates to complete
             location.reload();
-        }, 50); // 50ms delay; honestly, could be longer to ensure no race conditions before reload
+        }, 50);
     }
 })();
